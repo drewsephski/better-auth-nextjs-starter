@@ -9,12 +9,12 @@ if (typeof window === "undefined") {
   // For development and production, use environment variables
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    // Neon-specific settings
+    // Supabase-specific settings
     ssl: {
       rejectUnauthorized: false,
     },
-    // Connection pooling settings optimized for Neon
-    max: 5,
+    // Connection pooling settings optimized for Supabase
+    max: 10,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
     query_timeout: 10000,
