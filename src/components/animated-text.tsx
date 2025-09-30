@@ -1,6 +1,6 @@
 'use client';
 
-import { JSX, useEffect, useRef, useState } from 'react';
+import React, { JSX } from 'react';
 import { useTextAnimation } from '@/lib/use-text-animation';
 
 interface AnimatedTextProps {
@@ -14,7 +14,10 @@ interface AnimatedTextProps {
   trigger?: 'mount' | 'viewport';
 }
 
-export const AnimatedText: React.FC<AnimatedTextProps> = ({
+export const AnimatedText = React.forwardRef<
+  HTMLElement,
+  AnimatedTextProps & { as?: keyof JSX.IntrinsicElements }
+>(({
   children,
   as: Component = 'div',
   className = '',
@@ -22,8 +25,9 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
   duration = 0.4,
   stagger = 0.03,
   type = 'chars',
-  trigger = 'mount'
-}) => {
+  trigger = 'mount',
+  ...props
+}, ref) => {
   const elementRef = useTextAnimation({
     delay,
     duration,
@@ -34,11 +38,16 @@ export const AnimatedText: React.FC<AnimatedTextProps> = ({
     yOffset: 10
   });
 
-  return (
-    <Component ref={elementRef} className={className}>
-      {children}
-    </Component>
+  // Use the provided ref if available, otherwise use our animation ref
+  const combinedRef = ref || elementRef;
+
+  return React.createElement(
+    Component as any,
+    { ...props, ref: combinedRef, className },
+    children
   );
-};
+});
+
+AnimatedText.displayName = 'AnimatedText';
 
 export default AnimatedText;
